@@ -9,7 +9,7 @@
 #include <array>
 #include <sstream>
 #include "my_project/SlaeBaseException.hpp"
-#include "my_project/defines.h"
+#include "my_project/Defines.h"
 
 namespace Slae::Matrix{
     class ThreeDiagonalMatrix {
@@ -18,11 +18,12 @@ namespace Slae::Matrix{
     public:
         static ThreeDiagonalMatrix Zero(int n);
         static ThreeDiagonalMatrix Identity(int n);
-        static ThreeDiagonalMatrix ThreeIdentity(int n, double val1, double val2, double val3);
+        static ThreeDiagonalMatrix ThreeDiagonal(int n, double val1, double val2, double val3);
+        
         double & operator()(int i, int j);
         [[nodiscard]] const double & operator()(int i, int j) const;
         explicit ThreeDiagonalMatrix(int n);
-        [[nodiscard]] int size() const noexcept;
+        [[nodiscard]] int rows() const noexcept;
     };
 }  //  namespace Slae::Matrix
 

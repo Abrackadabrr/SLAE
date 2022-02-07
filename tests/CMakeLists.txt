@@ -21,5 +21,5 @@ foreach(TEST_FILE IN LISTS TEST_SOURCES)
     	gtest_main	# Подключаем библиотеку gtest
     )
     message("TEST_FILE: ${TEST_FILE}")
-    add_test(NAME ${EXECUTABLE_NAME} COMMAND ${EXECUTABLE_NAME})
+#    add_test(NAME ${EXECUTABLE_NAME} COMMAND ${EXECUTABLE_NAME})
 endforeach()
