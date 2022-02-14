@@ -8,18 +8,24 @@
 #include <algorithm>
 #include <fstream>
 #include <numeric>
+#include <cmath>
 
 /*
- * Returns value_t that is result of scalar producing of vectors
+ * CUSTOM FILE WITH SPECIAL FUNCTIONS FOR EASIER USE OF std::vector<>
+ */
+
+
+/*
+ * @return value_t that is result of scalar producing of vectors
  */
     template<typename value_t>
     value_t operator*(const std::vector<value_t>& first, const std::vector<value_t>& second) {
         return std::inner_product(first.begin(), first.end(), second.begin(), 0,
-                                  std::plus<value_t>(), std::multiplies<value_t>());
+                                   std::plus<>(), std::multiplies<>());
     }
 
 /*
- * Returns sum of vectors like in linear algebra
+ * @return sum of vectors like in linear algebra
  */
     template<typename value_t>
     std::vector<value_t> operator+(const std::vector<value_t>& first, const std::vector<value_t>& second) {
@@ -29,10 +35,10 @@
     }
 
 /*
- * Production of vector and number
+ * @return production of vector and number
  */
-    template<typename value_t>
-    std::vector<value_t> operator*(const std::vector<value_t>& first, value_t number) {
+    template<typename value_t, typename number_t>
+    std::vector<value_t> operator*(const std::vector<value_t>& first, number_t number) {
         std::vector<value_t> result;
         result.reserve(first.size());
         for (auto& i : first)
@@ -41,15 +47,23 @@
     }
 
 /*
- * Production of number and vector
+ * @return production of number and vector
  */
-    template<typename value_t>
-    value_t operator*(value_t number, const std::vector<value_t>& first) {
+    template<typename value_t, typename number_t>
+    std::vector<value_t> operator*(number_t number, const std::vector<value_t>& first) {
         return first*number;
     }
 
 /*
- * Returns sequence of instance between start ans stop with step between each neighboring elements
+* @return return subtraction of vectors like in linear algebra
+*/
+template<typename value_t>
+std::vector<value_t> operator-(const std::vector<value_t>& first, const std::vector<value_t>& second) {
+    return first + (-1)*second;
+}
+
+/*
+ * @return sequence of instance between start ans stop with step between each neighboring elements
  */
     template<typename value_type>
     std::vector<value_type> sequence(value_type start, value_type stop, value_type step)
@@ -76,18 +90,4 @@
         os << ']';
         return os;
     }
-
-/*
- * Output function for csv type
- * value_t is required to have an output operator
- */
-    template<typename value_t>
-    void printCsvFormat(std::ostream &os, const std::vector<value_t>& v)
-    {
-        for(int i = 0; i < v.size() - 1; i++)
-        {os << v[i] <<";";};
-        os << v[v.size() - 1];
-    }
-
-
 #endif //MY_PROJECT_VECTORS_H
