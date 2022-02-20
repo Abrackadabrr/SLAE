@@ -11,4 +11,3 @@ add_library(my_project ${MY_PROJECT_SOURCES})
 target_link_libraries(my_project PUBLIC )
 
 target_include_directories(my_project PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
