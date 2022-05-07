@@ -9,8 +9,8 @@
 namespace Slae::Matrix {
     template<typename T>
     struct Element {
-        std::size_t i;
-        std::size_t j;
+        unsigned i;
+        unsigned j;
         T value;
 
         bool operator<(Element<T> const &rgh) const;

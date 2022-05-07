@@ -105,11 +105,11 @@ std::vector<value_t> operator+(const std::vector<value_t>& first, const std::vec
     template<typename value_t>
     std::ostream &operator << (std::ostream &os, const std::vector<value_t>& v)
     {
-        os << "[";
+//        os << "[";
         for(int i = 0; i < v.size() - 1; i++)
         {os << v[i] <<" ";};
         os << v[v.size() - 1];
-        os << ']';
+//        os << ']';
         return os;
     }
 #endif //MY_PROJECT_VECTORS_HPP

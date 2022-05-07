@@ -6,11 +6,13 @@
 #define MATRIX_CSRMATRIX_H
 
 #include <vector>
-#include <iostream>
+#include <iomanip>
 #include <algorithm>
+#include <my_project/vectors/Norm.hpp>
 #include "my_project/matrix/sparse/CSRExeption.h"
 #include "my_project/vectors/Vectors.hpp"
 #include "my_project/matrix/utility/Element.hpp"
+#include "set"
 
 using std::vector;
 using std::ostream;
@@ -19,7 +21,7 @@ namespace Slae::Matrix {
     template<typename value_t>
     class CSR {
     public:
-        using ind_t = std::size_t;
+        using ind_t = unsigned;
 
         template<typename T>
         friend ostream &operator<<(ostream &os, const CSR<T> &matrix);
@@ -30,7 +32,10 @@ namespace Slae::Matrix {
         template<typename T>
         friend CSR operator*(value_t k, const CSR<T> &matrix);
 
-    private:
+//        template<typename T>
+//        friend vector<T> Slae::Solvers::GaussSeidelIteration(const int &A, const std::vector<T> &b, std::vector<T> x) {}
+
+    public:
         vector<value_t> _value;
         vector<ind_t> _col;
         vector<ind_t> _row_index;
@@ -67,8 +72,7 @@ namespace Slae::Matrix {
         [[nodiscard]] ind_t n_values() const {return _value.size();};
 
         CSR(const vector<value_t> &value, const vector<ind_t> &col, const vector<ind_t> &row_index, ind_t H,
-            ind_t W) :
-                _width(W), _height(H) {
+            ind_t W) : _width(W), _height(H) {
             if (row_index.size() != H + 1)
                 throw Slae::Matrix::CSRException("Invalid creation CSR (row_index.size != martrix height + 1)");
             if (value.size() != col.size())
@@ -83,8 +87,7 @@ namespace Slae::Matrix {
             _value = value;
         }
 
-        CSR(const ind_t &h, const ind_t &w, const std::set<Slae::Matrix::Element<value_t>> &in) : _height(h),
-                                                                                                  _width(w) {
+        CSR(const ind_t &h, const ind_t &w, const std::set<Slae::Matrix::Element<value_t>> &in) : _height(h), _width(w) {
             _value.resize(in.size());
             _col.resize(in.size());
             _row_index.resize(h + 1, 0);
@@ -106,6 +109,7 @@ namespace Slae::Matrix {
                 _row_index[currRow] = in.size();
             }
         }
+
         CSR() : _col{}, _value{}, _row_index{}, _height(0), _width(0) {};
 
         CSR(const CSR<value_t> &matrix) = default;
@@ -142,8 +146,8 @@ namespace Slae::Matrix {
         CSR operator+(const CSR &first_matrix) const {
             std::vector<unsigned> using_cols(_width, -1);  // vector for mark used cols
             std::vector<unsigned> tmp_cols;  // temporary сol
-            std::vector<unsigned> cols;  // col
-            std::vector<unsigned> row_ind(_height + 1);
+            std::vector<ind_t> cols;  // col
+            std::vector<ind_t> row_ind(_height + 1);
             std::vector<value_t> tmp_value;  // temporary vector contains values of added rows
             std::vector<value_t> val;
             row_ind[0] = 0;
@@ -157,12 +161,12 @@ namespace Slae::Matrix {
                     }
                     tmp_value[_col[j]] = _value[j];
                 }
-                for (unsigned j = first_matrix.row_index[i]; j < first_matrix.row_index[i + 1]; ++j) {
-                    if (using_cols[first_matrix.col[j]] != i) {
-                        using_cols[first_matrix.col[j]] = i;
-                        tmp_cols.emplace_back(first_matrix.col[j]);
+                for (unsigned j = first_matrix._row_index[i]; j < first_matrix._row_index[i + 1]; ++j) {
+                    if (using_cols[first_matrix._col[j]] != i) {
+                        using_cols[first_matrix._col[j]] = i;
+                        tmp_cols.emplace_back(first_matrix._col[j]);
                     }
-                    tmp_value[first_matrix.col[j]] += first_matrix.value[j];
+                    tmp_value[first_matrix._col[j]] += first_matrix._value[j];
                 }
                 for (const auto &j: tmp_cols) {
                     if (std::abs(tmp_value[j]) > std::numeric_limits<double>::epsilon()) {
@@ -219,6 +223,38 @@ namespace Slae::Matrix {
             os << "Col: " << _col << std::endl;
             os << "Row_indexes:" << _row_index << std::endl;
         }
+
+        CSR transpose() const {
+            ind_t NonZero = this->_value.size();
+            std::vector<value_t> tVals(NonZero);
+            std::vector<ind_t> tCols(NonZero);
+            std::vector<ind_t> tRows(_width + 1);
+            for (ind_t i = 0; i < NonZero; ++i)
+                tRows[_col[i] + 1]++;  //Посчитали число ненулевых элементов в каждой строке транспонированной матрицы
+            ind_t S = 0;
+            ind_t tmp;
+            for (ind_t i = 1; i <= _width; ++i) {          //запишем в индекс каждой из строк сумму из всех предыдущих
+                tmp = tRows[i];
+                tRows[i] = S;
+                S = S + tmp;
+            }
+            ind_t j1, j2, Col, RIndex, IIndex;
+            value_t V;
+            for (ind_t i = 0; i < _height; ++i) { //обойдем по всем строкам исходной матрицы
+                j1 = _row_index[i];
+                j2 = _row_index[i + 1];
+                Col = i;   //столбец в транспонированной = строка в исходной
+                for (ind_t j = j1; j < j2; ++j) { // обойдем по всем элементам текущей строки
+                    V = _value[j];      //значение
+                    RIndex = _col[j];   //номер строки транспонированной соответствующий значению
+                    IIndex = tRows[RIndex + 1]; // порядковый номер элемента в транспонированной матрице
+                    tVals[IIndex] = V;  // вставим значение в транспонированную матрицу
+                    tCols[IIndex] = Col;    // вставим индекс, соответствующий значению
+                    tRows[RIndex + 1]++;    //дополним каждую строку числом вставленных в нее элементов
+                }
+            }
+            return CSR(tVals, tCols, tRows, _width, _height);
+        }
     };
 
     template<typename value_t>
@@ -226,7 +262,7 @@ namespace Slae::Matrix {
         for (int i = 0; i < matrix.height(); i++) {
             os << "|| ";
             for (int j = 0; j < matrix.width(); j++)
-                os << matrix(i, j) << " ";
+                os << std::setw(3) << matrix(i, j) << " ";
             if (i != matrix.height() - 1) os << "||" << std::endl;
             else os << "||";
         }
@@ -238,6 +274,18 @@ namespace Slae::Matrix {
     ostream &operator<<(ostream &os, const CSR<value_t> &&matrix) { // <- working
         os << matrix;
         return os;
+    }
+
+    template<typename value_t>
+    void printToFile
+        (ostream &os, const CSR<value_t> &matrix) { // <- working
+        for (int i = 0; i < matrix.height(); i++) {
+            for (int j = 0; j < matrix.width(); j++) {
+                if (j != matrix.width() - 1) os << matrix(i, j) << " ";
+                else os << matrix(i, j);
+            }
+            if (i != matrix.height() - 1 ) os << '\n';
+        }
     }
 
 }  // Slae::Matrix

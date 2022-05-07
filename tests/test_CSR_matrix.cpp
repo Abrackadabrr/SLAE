@@ -20,8 +20,8 @@ protected:
     void SetUp() override {
         m1 = Slae::Matrix::CSR<double>::Diag(4, 4);
         std::vector<double> values{1, 2, 1, 3, 1, 2, 1};
-        std::vector<std::size_t> row{0, 2, 5, 7, 7};
-        std::vector<std::size_t> col{1, 3, 1, 2, 3, 1, 2};
+        std::vector<unsigned> row{0, 2, 5, 7, 7};
+        std::vector<unsigned> col{1, 3, 1, 2, 3, 1, 2};
         m2 = Slae::Matrix::CSR<double>(values, col, row, 4, 4);
         b = std::vector<double>{1, 1, 1, 1};
     }
@@ -33,7 +33,7 @@ TEST_F(CSRMATRIX_TESTS, EXCEPTION) {
     } catch (const Slae::Matrix::CSRException& err) {
         ASSERT_STREQ("csrexception", err.what());
     }
-};
+}
 
 TEST_F(CSRMATRIX_TESTS, ACCESS_OPERATOR) {
     ASSERT_EQ(m1(0, 0), 4) << "Operator () doesnt work properly";
@@ -45,6 +45,7 @@ TEST_F(CSRMATRIX_TESTS, ACCESS_OPERATOR) {
 TEST_F(CSRMATRIX_TESTS, MULTIPLICATION_BY_VECTOR){
     ASSERT_NEAR(norm(m1*b - std::vector<double>{4, 4, 4, 4}, NormType::InfNorm), 0, tolerance) << "Multiplication doesnt work properly";
     ASSERT_NEAR(norm(m2*b - std::vector<double>{3, 5, 3, 0}, NormType::InfNorm), 0, tolerance) << "Multiplication doesnt work properly";
+    ASSERT_NEAR(b*(m2*b) - 11, 0, tolerance) << "Multiplication doesnt work properly";
 }
 
 TEST_F(CSRMATRIX_TESTS, CONSTRUCTOR_OF_SET) {
@@ -79,4 +80,23 @@ TEST_F(CSRMATRIX_TESTS, CONSTRUCTOR_OF_SET) {
         for (int (l) = 0;  (l) < m2.width(); ++(l)) {
             ASSERT_NEAR(m2(k, l), matrix(k, l), std::numeric_limits<double>::epsilon());
         }
+}
+
+TEST_F(CSRMATRIX_TESTS, TRANSPOSE) {
+    auto m1T = m1.transpose();
+    for (int i = 0; i < m1._width; i++)
+        for (int j = 0; j < m1._height; j++)
+            ASSERT_NEAR(m1(i, j), m1T(j, i), 1e-10);
+    auto m2T = m2.transpose();
+    for (int i = 0; i < m2._width; i++)
+        for (int j = 0; j < m2._height; j++)
+            ASSERT_NEAR(m2(i, j), m2T(j, i), 1e-10);
+    std::vector<double> values{1, 2, 1, 3, 1, 2, 1, 1};
+    std::vector<unsigned> row{0, 2, 5, 7, 7, 8};
+    std::vector<unsigned> col{1, 3, 1, 2, 3, 1, 2, 2};
+    auto m3 = Slae::Matrix::CSR<double>(values, col, row, 5, 4);
+    auto m3T = m3.transpose();
+    for (int i = 0; i < m3._width; i++)
+        for (int j = 0; j < m3._height; j++)
+            ASSERT_NEAR(m3(i, j), m3T(j, i), 1e-10);
 }

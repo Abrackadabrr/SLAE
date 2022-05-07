@@ -27,6 +27,15 @@ TEST_F(VECTOR_NORM_TESTS, FIRST_NORM){
     ASSERT_NEAR(norm(v6, NormType::FirstNorm), 0, tolerance) << "First norm dont work properly";
 }
 
+TEST_F(VECTOR_NORM_TESTS, FIRST_NORM_NEW){
+    ASSERT_NEAR(Norm<NormType::FirstNorm>(v1), 6, tolerance) << "First norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::FirstNorm>(v2), 49, tolerance) << "First norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::FirstNorm>(v3), 1.1, tolerance) << "First norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::FirstNorm>(v4), 1.1, tolerance) << "First norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::FirstNorm>(v5), 11.2, tolerance) << "First norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::FirstNorm>(v6), 0, tolerance) << "First norm dont work properly";
+}
+
 TEST_F(VECTOR_NORM_TESTS, VECTOR_SECOND_NORM){
     ASSERT_NEAR(norm(v1, NormType::SecondNorm), std::sqrt(6), tolerance) << "Second norm dont work properly";
     ASSERT_NEAR(norm(v2, NormType::SecondNorm), std::sqrt(361), tolerance) << "Second norm dont work properly";
@@ -36,6 +45,15 @@ TEST_F(VECTOR_NORM_TESTS, VECTOR_SECOND_NORM){
     ASSERT_NEAR(norm(v6, NormType::SecondNorm), std::sqrt(0), tolerance) << "Second norm dont work properly";
 };
 
+TEST_F(VECTOR_NORM_TESTS, VECTOR_SECOND_NORM_NEW){
+    ASSERT_NEAR(Norm<NormType::SecondNorm>(v1), std::sqrt(6), tolerance) << "Second norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::SecondNorm>(v2), std::sqrt(361), tolerance) << "Second norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::SecondNorm>(v3), 1.1, tolerance) << "Second norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::SecondNorm>(v4), 1.1, tolerance) << "Second norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::SecondNorm>(v5), std::sqrt(22.68), tolerance) << "Second norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::SecondNorm>(v6), std::sqrt(0), tolerance) << "Second norm dont work properly";
+};
+
 TEST_F(VECTOR_NORM_TESTS, VECTOR_INF_NORM){
     ASSERT_NEAR(norm(v1, NormType::InfNorm), 1, tolerance) <<  "Inf norm dont work properly";
     ASSERT_NEAR(norm(v2, NormType::InfNorm), 11, tolerance) <<  "Inf norm dont work properly";
@@ -43,4 +61,13 @@ TEST_F(VECTOR_NORM_TESTS, VECTOR_INF_NORM){
     ASSERT_NEAR(norm(v4, NormType::InfNorm), 1.1, tolerance) <<  "Inf norm dont work properly";
     ASSERT_NEAR(norm(v5, NormType::InfNorm), 2.3, tolerance) <<  "Inf norm dont work properly";
     ASSERT_NEAR(norm(v6, NormType::InfNorm), 0, tolerance) <<  "Inf norm dont work properly";
+};
+
+TEST_F(VECTOR_NORM_TESTS, VECTOR_INF_NORM_NEW){
+    ASSERT_NEAR(Norm<NormType::InfNorm>(v1), 1, tolerance) <<  "Inf norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::InfNorm>(v2), 11, tolerance) <<  "Inf norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::InfNorm>(v3), 1.1, tolerance) <<  "Inf norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::InfNorm>(v4), 1.1, tolerance) <<  "Inf norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::InfNorm>(v5), 2.3, tolerance) <<  "Inf norm dont work properly";
+    ASSERT_NEAR(Norm<NormType::InfNorm>(v6), 0, tolerance) <<  "Inf norm dont work properly";
 };
