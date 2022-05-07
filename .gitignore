@@ -36,3 +36,13 @@ build*/
 .idea/
 cmake-build-debug/
 cmake-build-release/
+
+# Test lids
+googletest-master/
+
+# GitHub tokens
+token.txt
+
+# plots and vtk examples
+vtk_examples/
+plots/

@@ -10,6 +10,9 @@
 #include <sstream>
 #include "my_project/SlaeBaseException.hpp"
 #include "my_project/Defines.h"
+#include "my_project/matrix/sparse/CSRmatrix.h"
+#include "set"
+#include "my_project/matrix/utility/Element.hpp"
 
 namespace Slae::Matrix{
     /**
@@ -101,6 +104,29 @@ namespace Slae::Matrix{
          * @return matrix row-size
         */
         [[nodiscard]] int rows() const noexcept;
+
+        /**
+         * @brief Cast to CSR format
+         *
+         * @return CSR three diagonal matrix
+         */
+         [[nodiscard]] CSR<double> toCSR(){
+             std::set<Slae::Matrix::Element<double>> elements;
+             for (unsigned i = 0; i < data_.size(); i++) {
+                 if (i != 0 && i != data_.size() - 1) {
+                     elements.insert({i, i - 1, data_[i][0]});
+                     elements.insert({i, i, data_[i][1]});
+                     elements.insert({i, i + 1, data_[i][2]});
+                 } else if (i == 0) {
+                     elements.insert({i, i, data_[i][1]});
+                     elements.insert({i, i + 1, data_[i][2]});
+                 } else if (i == data_.size()-1) {
+                     elements.insert({i, i - 1, data_[i][0]});
+                     elements.insert({i, i, data_[i][1]});
+                 }
+             }
+            return CSR<double>(data_.size(), data_.size(), elements);
+         }
     };
 }  //  namespace Slae::Matrix
 

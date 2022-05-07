@@ -5,7 +5,7 @@
 #ifndef MY_PROJECT_THREEDIAGONALSOLVER_HPP
 #define MY_PROJECT_THREEDIAGONALSOLVER_HPP
 
-#include "my_project/matrix/ThreeDiagonalMatrix.hpp"
+#include "my_project/matrix/ThreeDiagonal/ThreeDiagonalMatrix.hpp"
 #include "my_project/Defines.h"
 
 namespace Slae::Solvers {
